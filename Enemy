@@ -1,0 +1,58 @@
+using UnityEngine;
+
+public class EnemyBasic : MonoBehaviour
+{
+    public Transform player;
+    public float speed;
+    public float detectionRange;
+    public Transform pointA;
+    public Transform pointB;
+    private Transform currentTarget;
+    void Start()
+    {
+        currentTarget = pointA;
+    }
+
+    void Update()
+    {
+        DetectPlayer();
+    }
+
+    void DetectPlayer()
+    {
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance <= detectionRange)
+        {
+            FollowPlayer();
+        }
+        else
+        {
+            Patrol();
+        }
+    }
+    void Patrol()
+    {
+        MoveToTarget(currentTarget.position);
+        if (Vector3.Distance(transform.position, currentTarget.position) < 0.3f)
+        {
+            SwitchTarget();
+        }
+    }
+    void FollowPlayer()
+    {
+        MoveToTarget(player.position);
+    }
+    void MoveToTarget(Vector3 target)
+    {
+        Vector3 direction = (target - transform.position).normalized;
+        transform.Translate(direction * speed * Time.deltaTime, Space.World);
+    }
+    void SwitchTarget()
+    {
+        if (currentTarget == pointA)
+            currentTarget = pointB;
+        else
+            currentTarget = pointA;
+    }
+}
